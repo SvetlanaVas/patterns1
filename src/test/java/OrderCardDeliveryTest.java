@@ -1,5 +1,9 @@
 import com.codeborne.selenide.SelenideElement;
+import com.codeborne.selenide.logevents.SelenideLogger;
+import io.qameta.allure.selenide.AllureSelenide;
 import com.github.javafaker.Faker;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Keys;
@@ -12,6 +16,7 @@ import java.util.Random;
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.*;
+import static com.codeborne.selenide.Selenide.open;
 
 
 public class OrderCardDeliveryTest {
@@ -26,9 +31,12 @@ public class OrderCardDeliveryTest {
     SelenideElement notificationSuccess = $("[data-test-id='success-notification']");
     SelenideElement replanNotification = $("[data-test-id= 'replan-notification']");
     SelenideElement planButton = $(byText("Перепланировать"));
-
-
     private Faker faker;
+
+    @BeforeAll
+    static void setUpAl() {
+        SelenideLogger.addListener("allure", new AllureSelenide());
+    }
 
     @BeforeEach
     void setUpAll() {
@@ -39,6 +47,14 @@ public class OrderCardDeliveryTest {
     void openHost() {
         open("http://localhost:9999");
     }
+
+    @AfterAll
+    static void tearDownAll() {
+        SelenideLogger.removeListener("allure");
+    }
+
+
+
     @Test
     void shouldChangeDeliveryDate() {
         String randomCity = DataGenerator.getCity();
